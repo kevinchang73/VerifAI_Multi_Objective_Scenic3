@@ -42,7 +42,7 @@ class ScenicServer(Server):
             self.rejectionFeedback = extSampler.rejectionFeedback
         self.monitor = monitor
         self.lastValue = None
-        defaults = DotMap(maxSteps=None, verbosity=0, maxIterations=1, simulator=None)
+        defaults = DotMap(maxSteps=None, verbosity=1, maxIterations=1, simulator=None)
         defaults.update(options)
         self.maxSteps = defaults.maxSteps
         self.verbosity = defaults.verbosity
@@ -51,11 +51,18 @@ class ScenicServer(Server):
             self.simulator = self.sampler.scenario.getSimulator()
         else:
             self.simulator = defaults.simulator
+        self.dynamic = defaults.get('dynamic', False)
 
     def evaluate_sample(self, sample):
         scene = self.sampler.lastScene
         assert scene
         result = self._simulate(scene)
+        if self.dynamic:
+            while result is None:
+                sample = self.get_sample(1)
+                scene = self.sampler.lastScene
+                assert scene
+                result = self._simulate(scene)
         if result is None:
             return self.rejectionFeedback
         value = (0 if self.monitor is None

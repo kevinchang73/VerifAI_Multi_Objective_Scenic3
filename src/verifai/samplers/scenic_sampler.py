@@ -278,6 +278,7 @@ class ScenicSampler(FeatureSampler):
         ret = self.scenario.generate(
             maxIterations=self.maxIterations, feedback=feedback, verbosity=0
         )
+        print('(scenic_sampler.py) ret =', ret)
         self.lastScene, _ = ret
         return self.pointForScene(self.lastScene)
 

@@ -7,7 +7,7 @@ sampler_idx=0 # 0 / 1 / 2 / -1 (-1 is for alternate)
 sampler_type=demab # demab / dmab / random / dce / halton / udemab
 exploration_ratio=2.0
 simulator=scenic.simulators.metadrive.model
-use_dynamic_rulebook=false # true / false (false is for a monolithic rulebook)
+use_dynamic_rulebook=true # true / false (false is for a monolithic rulebook)
 simulation_steps=300
 
 rm $scenario/outputs/$log_file

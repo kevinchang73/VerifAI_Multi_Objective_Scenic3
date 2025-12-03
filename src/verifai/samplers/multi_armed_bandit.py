@@ -73,7 +73,7 @@ class ContinuousMultiArmedBanditSampler(BoxSampler, MultiObjectiveSampler):
         if dist is None:
             dist = np.array([np.ones(int(b))/b for b in buckets])
         self.buckets = buckets # 1*d, each element specifies the number of buckets in that dimension
-        self.dist = dist # N*d, ???
+        self.dist = dist # N*d
         self.alpha = alpha
         self.thres = thres
         self.current_sample = None
@@ -82,7 +82,7 @@ class ContinuousMultiArmedBanditSampler(BoxSampler, MultiObjectiveSampler):
         self.t = 1 # time, used in Q
         self.counterexamples = dict()
         self.is_multi = True #False
-        self.invalid = np.array([np.zeros(int(b)) for b in buckets]) # N*d, ???
+        self.invalid = np.array([np.zeros(int(b)) for b in buckets]) # N*d
         self.monitor = None
         self.rho_values = []
         self.restart_every = restart_every

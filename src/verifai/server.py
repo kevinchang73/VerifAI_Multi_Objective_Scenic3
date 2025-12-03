@@ -47,7 +47,7 @@ def choose_sampler(sample_space, sampler_type,
         return 'ce', sampler
     if sampler_type == 'mab':
         print('(server.py) Choosing mab sampler')
-        print('(server.py) choose_sampler: sampler_params =', sampler_params)
+        print('(server.py) sampler_params =', sampler_params)
         if sampler_params is None:
             mab_params = default_sampler_params('mab')
         else:
@@ -70,7 +70,7 @@ def choose_sampler(sample_space, sampler_type,
         return 'mab', sampler
     if sampler_type == 'emab':
         print('(server.py) Choosing emab sampler')
-        print('(server.py) choose_sampler: sampler_params =', sampler_params)
+        print('(server.py) sampler_params =', sampler_params)
         if sampler_params is None:
             emab_params = default_sampler_params('emab')
         else:
@@ -93,7 +93,7 @@ def choose_sampler(sample_space, sampler_type,
         return 'emab', sampler
     if sampler_type == 'demab':
         print('(server.py) Choosing demab sampler')
-        print('(server.py) choose_sampler: sampler_params =', sampler_params)
+        print('(server.py) sampler_params =', sampler_params)
         if sampler_params is None:
             demab_params = default_sampler_params('demab')
         else:
@@ -116,7 +116,7 @@ def choose_sampler(sample_space, sampler_type,
         return 'demab', sampler
     if sampler_type == 'dmab':
         print('(server.py) Choosing dmab sampler')
-        print('(server.py) choose_sampler: sampler_params =', sampler_params)
+        print('(server.py) sampler_params =', sampler_params)
         if sampler_params is None:
             dmab_params = default_sampler_params('dmab')
         else:
@@ -139,7 +139,7 @@ def choose_sampler(sample_space, sampler_type,
         return 'dmab', sampler
     if sampler_type == 'dce':
         print('(server.py) Choosing dce sampler')
-        print('(server.py) choose_sampler: sampler_params =', sampler_params)
+        print('(server.py) sampler_params =', sampler_params)
         if sampler_params is None:
             dce_params = default_sampler_params('dce')
         else:
@@ -160,7 +160,7 @@ def choose_sampler(sample_space, sampler_type,
         return 'dce', sampler
     if sampler_type == 'udemab':
         print('(server.py) Choosing udemab sampler')
-        print('(server.py) choose_sampler: sampler_params =', sampler_params)
+        print('(server.py) sampler_params =', sampler_params)
         if sampler_params is None:
             udemab_params = default_sampler_params('udemab')
         else:

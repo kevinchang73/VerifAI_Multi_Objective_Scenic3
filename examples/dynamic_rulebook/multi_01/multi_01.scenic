@@ -10,7 +10,6 @@ DESCRIPTION: The ego vehicle is driving along its lane when it encounters a bloc
 
 param map = localPath('../maps/Town05.xodr')
 param carla_map = 'Town05'
-param N = 2
 model scenic.domains.driving.model
 
 #################################

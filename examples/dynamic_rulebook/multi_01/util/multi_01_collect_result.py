@@ -58,12 +58,12 @@ for i in range(len(lines)):
                 if s != '':
                     val3.append(float(s) < 0)
                     val_print.append(float(s))
-            assert len(val3) == 2, 'Invalid length of rho'
-            result_count_2[curr_source].append(val3[1]*1)
-            if tuple(1*np.array([val3[1]])) in counterexample_type_2[curr_source]:
-                counterexample_type_2[curr_source][tuple(1*np.array([val3[1]]))] += 1
+            assert len(val3) == 1, 'Invalid length of rho'
+            result_count_2[curr_source].append(val3[0]*1)
+            if tuple(1*np.array([val3[0]])) in counterexample_type_2[curr_source]:
+                counterexample_type_2[curr_source][tuple(1*np.array([val3[0]]))] += 1
             else:
-                counterexample_type_2[curr_source][tuple(1*np.array([val3[1]]))] = 1
+                counterexample_type_2[curr_source][tuple(1*np.array([val3[0]]))] = 1
 
             if order == '-1':
                 curr_source = curr_source + 1 if curr_source < 2 else 0

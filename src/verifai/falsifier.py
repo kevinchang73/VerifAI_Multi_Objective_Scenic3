@@ -161,8 +161,8 @@ class falsifier(ABC):
                     if self.verbosity >= 1:
                         print("Sampler has generated all possible samples")
                     break
-                if self.verbosity >= 1:
-                    print("Sample no: ", i, "\nSample: ", sample, "\nRho: ", rho, "\n")
+                if self.verbosity >= 2:
+                    print("Sample no: ", i, "\nSample: ", sample, "\nRho: ", rho)
                 if self.dynamic:
                     print('RHO')
                     for rh in rho:

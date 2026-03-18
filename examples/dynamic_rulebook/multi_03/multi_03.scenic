@@ -9,7 +9,6 @@ AUTHOR: Kai-Chun Chang, kaichunchang@berkeley.edu
 
 param map = localPath('../maps/Town05.xodr')
 param carla_map = 'Town05'
-param N = 11
 model scenic.domains.driving.model
 
 #################################

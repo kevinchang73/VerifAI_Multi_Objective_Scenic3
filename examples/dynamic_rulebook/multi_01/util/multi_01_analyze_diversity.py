@@ -47,13 +47,6 @@ for file in all_files:
                 dist_threshold.append(float(line1.split(',')[-4]))
                 bypass_dist.append(float(line1.split(',')[-5]))
                 blocking_car_dist.append(float(line1.split(',')[-6]))
-            #if float(line1.split(',')[-1]) < 0 or float(line1.split(',')[-2]) < 0 or float(line2.split(',')[-1]) < 0 or float(line2.split(',')[-2]) < 0 or float(line3.split(',')[-2]) < 0:
-            #    ego_speed.append(float(line1.split(',')[-3]))
-            #    dist_threshold.append(float(line1.split(',')[-4]))
-            #    bypass_dist.append(float(line1.split(',')[-5]))
-            #    blocking_car_dist.append(float(line1.split(',')[-6]))
-            #else:
-            #    print(file, i)
 
 ax.scatter(ego_speed, dist_threshold, bypass_dist, c='b')
 ax.scatter(ego_speed_max, dist_threshold_max, bypass_dist_max, c='r')
@@ -66,4 +59,3 @@ print("Standard deviation of ego_speed:", np.std(ego_speed), len(ego_speed))
 print("Standard deviation of dist_threshold:", np.std(dist_threshold), len(dist_threshold))
 print("Standard deviation of bypass_dist:", np.std(bypass_dist), len(bypass_dist))
 print("Standard deviation of blocking_car_dist:", np.std(blocking_car_dist), len(blocking_car_dist))
-print()

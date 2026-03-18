@@ -9,9 +9,9 @@ from verifai.samplers.multi_objective import MultiObjectiveSampler
 from verifai.rulebook import rulebook
 
 class DynamicCrossEntropySampler(DomainSampler):
+    verbosity = 1
+    
     def __init__(self, domain, dce_params):
-        print('(dynamic_ce.py) Initializing!!!')
-        print('(dynamic_ce.py) dce_params =', dce_params)
         super().__init__(domain)
         self.alpha = dce_params.alpha
         self.thres = dce_params.thres
@@ -38,23 +38,17 @@ class DynamicCrossEntropySampler(DomainSampler):
                                                                 RandomSampler)
             for subsampler in self.split_samplers[id].samplers:
                 if isinstance(subsampler, ContinuousDynamicCESampler):
-                    print('(dynamic_ce.py) Set priority graph', id)
                     subsampler.set_graph(priority_graph)
                 elif isinstance(subsampler, DiscreteDynamicCESampler):
                     assert True
                 else:
                     assert isinstance(subsampler, RandomSampler)
-            node_ids = list(nx.dfs_preorder_nodes(priority_graph))
-            if not sorted(node_ids) == list(range(len(node_ids))):
-                raise ValueError('Node IDs should be in order and start from 0')
         if not sorted(list(self.split_samplers.keys())) == list(range(len(rulebook.priority_graphs))):
             raise ValueError('Priority graph IDs should be in order and start from 0')
         self.num_segs = len(self.split_samplers)
-        print('(dynamic_ce.py) num_segs =', self.num_segs)
         self.sampler_idx = 0
         self.using_sampler = rulebook.using_sampler # -1: round-robin
         assert self.using_sampler < self.num_segs
-        print('(dynamic_ce.py) using_sampler =', self.using_sampler)
 
     def getSample(self):
         if self.using_sampler == -1:
@@ -73,11 +67,13 @@ class DynamicCrossEntropySampler(DomainSampler):
                 self.split_samplers[i].update(sample, info, rhos)
             return
         if self.using_sampler == -1:
-            print('(dynamic_ce.py) Getting feedback from segment', self.sampler_idx % self.num_segs)
+            if self.verbosity >= 2:
+                print('(dynamic_ce.py) Getting feedback from segment', self.sampler_idx % self.num_segs)
             for i in range(len(rhos)):
                 self.split_samplers[i].update(sample, info, rhos[i])
         else:
-            print('(dynamic_ce.py) Getting feedback from segment', self.using_sampler)
+            if self.verbosity >= 2:
+                print('(dynamic_ce.py) Getting feedback from segment', self.using_sampler)
             self.split_samplers[self.using_sampler].update(sample, info, rhos[self.using_sampler])
         self.sampler_idx += 1
 
@@ -98,21 +94,10 @@ class ContinuousDynamicCESampler(BoxSampler, MultiObjectiveSampler):
         if dist is None:
             dist = np.array([np.ones(int(b))/b for b in buckets])
         self.buckets = buckets # 1*d, each element specifies the number of buckets in that dimension
-        self.dist = dist # N*d, ???
+        self.dist = dist # N*d
         self.alpha = alpha
         self.thres = thres
         self.current_sample = None
-
-        #self.counts = np.array([np.ones(int(b)) for b in buckets]) # N*d, T (visit times)
-        #self.errors = np.array([np.zeros(int(b)) for b in buckets]) # N*d, total times resulting in maximal counterexample
-        #self.t = 1 # time, used in Q
-        #self.counterexamples = dict()
-        #self.is_multi = True #False
-        #self.invalid = np.array([np.zeros(int(b)) for b in buckets]) # N*d, ???
-        #self.monitor = None
-        #self.rho_values = []
-        #self.restart_every = restart_every
-        #self.exploration_ratio = 2.0
 
     def getVector(self):
         return self.generateSample()
@@ -140,19 +125,19 @@ class ContinuousDynamicCESampler(BoxSampler, MultiObjectiveSampler):
         # AND
         is_ce = True
         for node in self.priority_graph.nodes:
-            if self.priority_graph.nodes[node]['active'] and rho[node] >= self.thres[node]:
+            if rho[node] >= self.thres[node]:
                 is_ce = False
                 break
         # OR
         #is_ce = False
         #for node in self.priority_graph.nodes:
-        #    if self.priority_graph.nodes[node]['active'] and rho[node] < self.thres[node]:
+        #    if rho[node] < self.thres[node]:
         #        is_ce = True
         #        break
         
         if not is_ce:
             return
-        print('(dynamic_ce.py) IS CE! Updating!!!')
+        print('(dynamic_ce.py) IS CE! Updating!')
         for row, b in zip(self.dist, info):
             row *= self.alpha
             row[b] += 1 - self.alpha

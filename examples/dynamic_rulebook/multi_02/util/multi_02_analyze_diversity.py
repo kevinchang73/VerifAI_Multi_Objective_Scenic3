@@ -34,16 +34,16 @@ for file in all_files:
         for i in range(1, len(lines), 2):
             line1 = lines[i]
             line2 = lines[i+1]
-            if float(line1.split(',')[-3]) < 0 and float(line1.split(',')[-2]) < 0:
-                ego_speed_seg0_max.append(float(line1.split(',')[-5]))
-                ego_brake_seg0_max.append(float(line1.split(',')[-6]))
-                adv_speed_seg0_max.append(float(line1.split(',')[-7]))
-                adv3_speed_seg0_max.append(float(line1.split(',')[-8]))
-            elif float(line1.split(',')[-3]) < 0 or float(line1.split(',')[-2]) < 0 or float(line2.split(',')[-1]) < 0 or float(line2.split(',')[-4]) < 0:
-                ego_speed.append(float(line1.split(',')[-5]))
-                ego_brake.append(float(line1.split(',')[-6]))
-                adv_speed.append(float(line1.split(',')[-7]))
-                adv3_speed.append(float(line1.split(',')[-8]))
+            if float(line1.split(',')[-1]) < 0 and float(line1.split(',')[-2]) < 0:
+                ego_speed_seg0_max.append(float(line1.split(',')[-3]))
+                ego_brake_seg0_max.append(float(line1.split(',')[-4]))
+                adv_speed_seg0_max.append(float(line1.split(',')[-5]))
+                adv3_speed_seg0_max.append(float(line1.split(',')[-6]))
+            elif float(line1.split(',')[-2]) < 0 or float(line1.split(',')[-1]) < 0 or float(line2.split(',')[-1]) < 0 or float(line2.split(',')[-2]) < 0:
+                ego_speed.append(float(line1.split(',')[-3]))
+                ego_brake.append(float(line1.split(',')[-4]))
+                adv_speed.append(float(line1.split(',')[-5]))
+                adv3_speed.append(float(line1.split(',')[-6]))
             else:
                 print(file, i)
 
@@ -58,4 +58,3 @@ print("Standard deviation of ego_speed:", np.std(ego_speed), len(ego_speed))
 print("Standard deviation of ego_brake:", np.std(ego_brake), len(ego_brake))
 print("Standard deviation of adv_speed:", np.std(adv_speed), len(adv_speed))
 print("Standard deviation of adv3_speed:", np.std(adv3_speed), len(adv3_speed))
-print()

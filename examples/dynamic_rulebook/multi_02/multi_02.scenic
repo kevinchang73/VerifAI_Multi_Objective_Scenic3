@@ -9,9 +9,7 @@ AUTHOR: Kai-Chun Chang, kaichunchang@berkeley.edu
 
 param map = localPath('../maps/Town05.xodr')
 param carla_map = 'Town05'
-param N = 4
 model scenic.domains.driving.model
-#model scenic.simulators.carla.model
 
 #################################
 # CONSTANTS                     #
@@ -22,11 +20,11 @@ MODEL = 'vehicle.lincoln.mkz_2017'
 param EGO_SPEED = VerifaiRange(8, 12)
 param EGO_BRAKE = VerifaiRange(0.7, 1.0)
 param ADV_SPEED = VerifaiRange(3, 6)
-param ADV3_SPEED = VerifaiRange(3, 6) #VerifaiRange(1, 3)
+param ADV3_SPEED = VerifaiRange(3, 6)
 
 ADV1_DIST = 12
 ADV2_DIST = -6
-ADV3_DIST = 6 #18
+ADV3_DIST = 6
 
 BYPASS_DIST = 10
 SAFE_DIST = 10
@@ -112,8 +110,6 @@ terminate when (distance to egoSpawnPt) > TERM_DIST
 # RECORDING                     #
 #################################
 
-#record initial (adv2.lane.polygon.exterior.coords) as egoStartLaneCoords
-#record final (adv2.lane.polygon.exterior.coords) as egoEndLaneCoords
 record (ego.lane is initLane or ego.lane is not adv2.lane) as egoIsInInitLane
 record (adv2.lane is initLane) as adv2IsInInitLane # start evaluation only when adv2 reaches another lane
 record (adv3.lane is initLane) as adv3IsInInitLane # start evaluation only when adv3 reaches another lane

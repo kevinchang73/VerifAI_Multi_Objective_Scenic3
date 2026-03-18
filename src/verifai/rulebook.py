@@ -21,15 +21,20 @@ class rulebook(ABC):
     exploration_ratio = 2.0
     using_continuous = False
     
-    def __init__(self, graph_path, rule_file, single_graph=False):
+    def __init__(self, graph_path, rule_file, segment_func_path, save_path=None, single_graph=False, using_sampler=-1, exploration_ratio=2.0):
         print('(rulebook.py) Parsing rules...')
         self._parse_rules(rule_file)
-        print('(rulebook.py) Parsing rulebook...')
+        print('(rulebook.py) Parsing rulebooks...')
         if single_graph:
             self._parse_rulebook(graph_path)
         else:
             self._parse_rulebooks(graph_path)
         self.single_graph = single_graph
+        print('(rulebook.py) Parsing the segment function...')
+        self._parse_segment_function(segment_func_path)
+        self.save_path = save_path
+        rulebook.using_sampler = using_sampler
+        rulebook.exploration_ratio = exploration_ratio
 
     def _parse_rules(self, file_path):
         # Parse the input rules (*_spec.py)
@@ -48,7 +53,7 @@ class rulebook(ABC):
             exec(function_code)
             self.functions[function_name] = locals()[function_name]
 
-        print(f'Parsed functions: {self.functions}')
+        print(f'(rulebook.py) Parsed functions: {self.functions}')
 
     def _parse_rulebooks(self, dir):
         if os.path.isdir(dir):
@@ -59,9 +64,6 @@ class rulebook(ABC):
                         self._parse_rulebook(fname)
 
     def _parse_rulebook(self, file):
-        # TODO: parse the input rulebook
-        # 1. construct the priority_graph
-        # 2. construct a dictionary mapping from each node_id to corresponding rule object
         priority_graph = nx.DiGraph()
         graph_id = -1
         with open(file, 'r') as f:
@@ -73,7 +75,7 @@ class rulebook(ABC):
                 if line.startswith('# ID'):
                     graph_id = int(line.split(' ')[-1])
                     if self.verbosity >= 1:
-                        print(f'Parsing graph {graph_id}')
+                        print(f'(rulebook.py) Parsing graph {graph_id}')
                 if line == '# Node list':
                     node_section = True
                     continue
@@ -86,28 +88,44 @@ class rulebook(ABC):
                 if node_section:
                     node_info = line.split(' ')
                     node_id = int(node_info[0])
-                    node_active = True if node_info[1] == 'on' else False
-                    rule_name = node_info[2]
-                    rule_type = node_info[3]
-                    if rule_type == 'monitor':
-                        ru = rule(node_id, self.functions[rule_name], rule_type)
-                        priority_graph.add_node(node_id, rule=ru, active=node_active, name=rule_name)
-                        if self.verbosity >= 2:
-                            print(f'Add node {node_id} with rule {rule_name}')
-                    #TODO: mtl type
+                    rule_name = node_info[1]
+                    ru = rule(node_id, self.functions[rule_name])
+                    priority_graph.add_node(node_id, rule=ru, name=rule_name)
+                    if self.verbosity >= 2:
+                        print(f'Add node {node_id} with rule {rule_name}')
                 
                 # Edge
                 if edge_section:
                     edge_info = line.split(' ')
                     src = int(edge_info[0])
                     dst = int(edge_info[1])
+                    if not priority_graph.has_node(src) or not priority_graph.has_node(dst):
+                        raise ValueError(f'Edge refers to non-existent node: {src} -> {dst}')
                     priority_graph.add_edge(src, dst)
                     if self.verbosity >= 2:
                         print(f'Add edge from {src} to {dst}')
-
-                # TODO: process the graph, e.g., merge the same level nodes
                 
         self.priority_graphs[graph_id] = priority_graph
+        
+    def _parse_segment_function(self, file_path):
+        # Parse the function that outputs the indices for different segments
+        with open(file_path, 'r') as file:
+            file_contents = file.read()
+
+        tree = ast.parse(file_contents)
+
+        function_visitor = FunctionVisitor()
+        function_visitor.visit(tree)
+
+        if len(function_visitor.functions) == 0:
+            raise ValueError('No function found in segment function file')
+        if len(function_visitor.functions) > 1:
+            raise ValueError('Multiple functions found in segment function file')
+
+        function_node = function_visitor.functions[0]
+        function_code = compile(ast.Module(body=[function_node], type_ignores=[]), '<string>', 'exec')
+        exec(function_code)
+        self.segment_function = locals()[function_node.name]
 
     def evaluate_segment(self, traj, graph_idx=0, indices=None):
         # Evaluate the result of each rule on the segment traj[indices] of the trajectory
@@ -116,12 +134,7 @@ class rulebook(ABC):
         idx = 0
         for id in sorted(priority_graph.nodes):
             rule = priority_graph.nodes[id]['rule']
-            if priority_graph.nodes[id]['active']:
-                if self.verbosity >= 2:
-                    print('Evaluating rule', id)
-                rho[idx] = rule.evaluate(traj, indices)
-            else:
-                rho[idx] = 1
+            rho[idx] = rule.evaluate(traj, indices)
             idx += 1
         return rho
     
@@ -136,8 +149,27 @@ class rulebook(ABC):
             rho = rule.evaluate(traj, indices)
         return rho
 
-    def evaluate(self, traj):
-        raise NotImplementedError('evaluate() is not implemented')
+    def evaluate(self, simulation):
+        # Use the segment function to get different segments
+        segments = self.segment_function(simulation)
+        
+        # Use evaluate_segment to evaluate each segment
+        if self.single_graph:
+            print('Actual rho:')
+            for i in range(len(segments)):
+                rho = self.evaluate_segment(simulation, 0, segments[i])
+                for r in rho:
+                    print(r, end=' ')
+                print()
+            rho = self.evaluate_segment(simulation, 0, np.arange(0, len(simulation.result.trajectory)))
+            return np.array([rho])
+        else:
+            assert len(segments) == len(self.priority_graphs), 'Number of segments does not match number of graphs'
+            rhos = []
+            for i in range(len(segments)):
+                rho = self.evaluate_segment(simulation, i, segments[i])
+                rhos.append(rho)
+            return np.array(rhos, dtype=object)
 
     def update_graph(self):
         pass

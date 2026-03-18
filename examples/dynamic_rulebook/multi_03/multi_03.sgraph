@@ -1,16 +1,14 @@
 # ID 0
 # Node list
-0 on rule0 monitor
-1 on rule1 monitor
-2 on rule2 monitor
-3 on rule3 monitor
-4 on rule4 monitor
-5 on rule5 monitor
-6 off rule6 monitor
-7 off rule7 monitor
-8 on rule8 monitor
-9 on rule9 monitor
-10 on rule10 monitor
+0 rule0
+1 rule1
+2 rule2
+3 rule3
+4 rule4
+5 rule5
+8 rule8
+9 rule9
+10 rule10
 # Edge list
 0 1
 0 2

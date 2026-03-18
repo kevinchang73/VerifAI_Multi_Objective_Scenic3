@@ -26,6 +26,7 @@ def choose_sampler(sample_space, sampler_type,
         sampler = FeatureSampler.haltonSamplerFor(sample_space,
                                                   halton_params=halton_params)
         return 'halton', sampler
+    
     if sampler_type == 'ce':
         if sampler_params is None:
             ce_params = default_sampler_params('ce')
@@ -45,9 +46,8 @@ def choose_sampler(sample_space, sampler_type,
         sampler = FeatureSampler.crossEntropySamplerFor(
             sample_space, ce_params=ce_params)
         return 'ce', sampler
+    
     if sampler_type == 'mab':
-        print('(server.py) Choosing mab sampler')
-        print('(server.py) sampler_params =', sampler_params)
         if sampler_params is None:
             mab_params = default_sampler_params('mab')
         else:
@@ -68,9 +68,8 @@ def choose_sampler(sample_space, sampler_type,
         sampler = FeatureSampler.multiArmedBanditSamplerFor(
             sample_space, mab_params=mab_params)
         return 'mab', sampler
+    
     if sampler_type == 'emab':
-        print('(server.py) Choosing emab sampler')
-        print('(server.py) sampler_params =', sampler_params)
         if sampler_params is None:
             emab_params = default_sampler_params('emab')
         else:
@@ -91,9 +90,8 @@ def choose_sampler(sample_space, sampler_type,
         sampler = FeatureSampler.extendedMultiArmedBanditSamplerFor(
             sample_space, emab_params=emab_params)
         return 'emab', sampler
+    
     if sampler_type == 'demab':
-        print('(server.py) Choosing demab sampler')
-        print('(server.py) sampler_params =', sampler_params)
         if sampler_params is None:
             demab_params = default_sampler_params('demab')
         else:
@@ -114,9 +112,8 @@ def choose_sampler(sample_space, sampler_type,
         sampler = FeatureSampler.dynamicExtendedMultiArmedBanditSamplerFor(
             sample_space, demab_params=demab_params)
         return 'demab', sampler
+    
     if sampler_type == 'dmab':
-        print('(server.py) Choosing dmab sampler')
-        print('(server.py) sampler_params =', sampler_params)
         if sampler_params is None:
             dmab_params = default_sampler_params('dmab')
         else:
@@ -137,9 +134,8 @@ def choose_sampler(sample_space, sampler_type,
         sampler = FeatureSampler.dynamicMultiArmedBanditSamplerFor(
             sample_space, dmab_params=dmab_params)
         return 'dmab', sampler
+    
     if sampler_type == 'dce':
-        print('(server.py) Choosing dce sampler')
-        print('(server.py) sampler_params =', sampler_params)
         if sampler_params is None:
             dce_params = default_sampler_params('dce')
         else:
@@ -158,9 +154,8 @@ def choose_sampler(sample_space, sampler_type,
         sampler = FeatureSampler.dynamicCrossEntropySamplerFor(
             sample_space, dce_params=dce_params)
         return 'dce', sampler
+    
     if sampler_type == 'udemab':
-        print('(server.py) Choosing udemab sampler')
-        print('(server.py) sampler_params =', sampler_params)
         if sampler_params is None:
             udemab_params = default_sampler_params('udemab')
         else:
@@ -179,6 +174,7 @@ def choose_sampler(sample_space, sampler_type,
         sampler = FeatureSampler.dynamicUnifiedExtendedMultiArmedBanditSamplerFor(
             sample_space, udemab_params=udemab_params)
         return 'udemab', sampler
+    
     if sampler_type == 'eg':
         if sampler_params is None:
             eg_params = default_sampler_params('eg')
